@@ -1,0 +1,34 @@
+body{
+    background-color: #333;
+    font-family: 'Courier New', Courier, monospace;
+    display : flex-column;
+}
+
+.nav{
+    background-color: #333;
+    color: white;
+    padding: 0px;
+    text-align: center;
+}
+
+.span_nav{
+    color: white;
+    font-size: 1.5em;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+footer{
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 0px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.grid{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 10px;
+    padding: 10px;
+}
+
