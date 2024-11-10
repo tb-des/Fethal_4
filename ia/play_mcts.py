@@ -6,6 +6,10 @@ import json
 import torch.nn as nn
 import torch.nn.functional as F
 
+from flask import Flask, render_template, request, jsonify
+
+
+
 class ConnectFour:
     def __init__(self):
         self.row_count = 6
@@ -318,9 +322,7 @@ def play_mcts(json_info):
 
     # Créer un dictionnaire pour le coup joué
     coup = {
-        "colonne": action,
-        "ligne": ligne,
-        "player": player
+        "resultat": action*ligne
     }
 
     # Retourner le coup joué en format JSON
@@ -349,5 +351,22 @@ def test():
 
     return move
 
-if __name__ == "__main__":
-    test()
+
+
+app = Flask(__name__)
+
+# Route pour afficher la page HTML
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Route pour gérer le formulaire et utiliser la fonction Python
+@app.route('/resultat', methods=['POST'])
+def resultat():
+    valeur = request.json.get('valeur')  # Récupère les données envoyées par l'utilisateur
+    resultat = play_mcts(valeur)  # Appelle la fonction Python
+    print(resultat)
+    return jsonify({'resultat': resultat})
+
+if __name__ == '__main__':
+    app.run(debug=True)

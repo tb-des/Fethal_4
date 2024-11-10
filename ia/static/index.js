@@ -44,6 +44,30 @@ cases.forEach(caseElement => {
             }
         }
         else if ($is_turn == 1) {
+            //Fonction Alext
+            // document.body.style.backgroundColor = 'red'
+
+            // Envoie une requête POST à Flask via AJAX
+            fetch('/resultat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',  // Indique que nous envoyons du JSON
+                },
+                body: JSON.stringify({ 'valeur': "bonjour" })  // Envoie la valeur comme JSON
+            })
+            .then(response => response.json())  // Attends la réponse en format JSON
+            .then(data => {
+                // Affiche le résultat reçu
+                alert(data.resultat);  // Affiche le résultat de la fonction Python
+                alert(data.resultat);  // Affiche le résultat de la fonction Python
+                if (data.resultat == "bonjour") {
+                    document.body.style.backgroundColor = 'red'
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
+
             
         }
     });
