@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon site avec Python</title>
+</head>
+<body>
+    <h1>Interagir avec une fonction Python</h1>
+    <form action="/resultat" method="post">
+        <label for="input_valeur">Entrez une valeur :</label>
+        <input type="text" id="input_valeur" name="input_valeur" required>
+        <button type="submit">Envoyer</button>
+    </form>
+    
+    {% if resultat %}
+        <h2>Résultat :</h2>
+        <p>{{ resultat }}</p>
+    {% endif %}
+</body>
+</html>
