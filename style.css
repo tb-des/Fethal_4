@@ -30,5 +30,26 @@ footer{
     grid-template-columns: repeat(7, 1fr);
     grid-gap: 10px;
     padding: 10px;
+    margin-left: 33%;
+    margin-right: 33%; 
+    margin-top: 100px;
+    margin-bottom: 50px;
 }
 
+.grid-item{
+    color: white;
+    text-align: center;
+    border: white 3px solid;
+    transition: all 0.5s;
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 100%;
+
+}
+
+.grid-item:hover{
+    background-color: #333;
+    color: green;
+    border: green 3px solid;
+}
