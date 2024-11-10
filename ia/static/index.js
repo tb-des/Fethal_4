@@ -59,7 +59,6 @@ cases.forEach(caseElement => {
             .then(response => response.json())  // Attends la réponse en format JSON
             .then(data => {
                 // Affiche le résultat reçu
-                alert(data.resultat);  // Affiche le résultat de la fonction Python
                 cases[data.resultat].style.backgroundColor = $ai_color;
                 $is_turn = 0;
             })

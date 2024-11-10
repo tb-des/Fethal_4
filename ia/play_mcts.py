@@ -272,15 +272,18 @@ def check_if_board_right(board):
 
 
 def play_mcts(json_info):
-    is_valid, message = check_if_board_right(json_info)
-    if not is_valid:
-        raise ValueError(message)
+
+    print(json_info)
+
+    # is_valid, message = check_if_board_right(json_info)
+    # if not is_valid:
+    #     raise ValueError(message)
 
     # Convertion du board de liste vers matrice
-    board = json_info["board"]
+    board = json_info
     board =  [board[i:i + 7] for i in range(0, len(board), 7)]
 
-    player = json_info["currentPlayer"]
+    player = -1
 
     # Identifier les colonnes où un coup est possible
     colonnes_valides = [col for col in range(len(board[0])) if board[0][col] == 0]
@@ -293,7 +296,7 @@ def play_mcts(json_info):
 
     args = {
         'C': 2,
-        'num_searches': 600,
+        'num_searches': 60,
         'dirichlet_epsilon': 0.,
         'dirichlet_alpha': 0.3
     }
@@ -321,9 +324,7 @@ def play_mcts(json_info):
             break
 
     # Créer un dictionnaire pour le coup joué
-    coup = {
-        "resultat": action*ligne
-    }
+    coup =  action + ligne*7
 
     # Retourner le coup joué en format JSON
     return json.dumps(coup)
