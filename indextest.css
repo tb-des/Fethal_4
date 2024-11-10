@@ -1,0 +1,32 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #707070;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 colonnes */
+    grid-template-rows: repeat(6, 1fr); /* 6 lignes */
+    gap: 10px; /* Espacement entre les boutons */
+    width: 70%; /* Largeur de la grille */
+    max-width: 600px; /* Limite de la largeur pour les grands écrans */
+}
+
+/* Style des boutons */
+.grid-item {
+    padding: 20px;
+    font-size: 18px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.grid-item:hover {
+    background-color: #45a049;
+}
