@@ -60,10 +60,8 @@ cases.forEach(caseElement => {
             .then(data => {
                 // Affiche le résultat reçu
                 alert(data.resultat);  // Affiche le résultat de la fonction Python
-                alert(data.resultat);  // Affiche le résultat de la fonction Python
-                if (data.resultat == "bonjour") {
-                    document.body.style.backgroundColor = 'red'
-                }
+                cases[data.resultat].style.backgroundColor = $ai_color;
+                $is_turn = 0;
             })
             .catch(error => {
                 console.error('Erreur:', error);
