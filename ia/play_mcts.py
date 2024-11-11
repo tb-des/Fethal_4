@@ -10,6 +10,8 @@ from flask import Flask, render_template, request, jsonify
 
 
 
+
+
 class ConnectFour:
     def __init__(self):
         self.row_count = 6
@@ -271,6 +273,46 @@ def check_if_board_right(board):
     return True, "Board is valid"
 
 
+def check_victory(board):
+    rows = len(board)
+    cols = len(board[0])
+    
+    # Vérifier les alignements horizontaux
+    for i in range(rows):
+        for j in range(cols - 3):  # On s'arrête à 4 colonnes avant la fin
+            if board[i][j] != 0 and board[i][j] == board[i][j + 1] == board[i][j + 2] == board[i][j + 3]:
+                return True, board[i][j]
+    
+    # Vérifier les alignements verticaux
+    for i in range(rows - 3):  # On s'arrête à 3 lignes avant la fin
+        for j in range(cols):
+            if board[i][j] != 0 and board[i][j] == board[i + 1][j] == board[i + 2][j] == board[i + 3][j]:
+                return True, board[i][j]
+    
+    # Vérifier les diagonales descendantes
+    for i in range(rows - 3):
+        for j in range(cols - 3):
+            if board[i][j] != 0 and board[i][j] == board[i + 1][j + 1] == board[i + 2][j + 2] == board[i + 3][j + 3]:
+                return True, board[i][j]
+    
+    # Vérifier les diagonales montantes
+    for i in range(3, rows):
+        for j in range(cols - 3):
+            if board[i][j] != 0 and board[i][j] == board[i - 1][j + 1] == board[i - 2][j + 2] == board[i - 3][j + 3]:
+                return True, board[i][j]
+    
+    # Si aucune condition de victoire n'est trouvée
+    return False, 0
+
+
+game = ConnectFour()
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+model = ResNet(game, 9, 128, device)
+model.load_state_dict(torch.load("ia/model_7_ConnectFour.pt", map_location=device))
+model.eval()
+
 def play_mcts(json_info):
 
     print(json_info)
@@ -283,6 +325,16 @@ def play_mcts(json_info):
     board = json_info
     board =  [board[i:i + 7] for i in range(0, len(board), 7)]
 
+    is_human_win, winner = check_victory(board)
+
+    if is_human_win == True and winner == 1:
+        # Return Victoire Humain
+        info_json = {
+            "coup": -1,
+            "player_win": winner
+        }
+        return info_json
+
     player = -1
 
     # Identifier les colonnes où un coup est possible
@@ -291,8 +343,6 @@ def play_mcts(json_info):
     # Si aucune colonne valide, retourner le board inchangé
     if not colonnes_valides:
         raise ValueError("Aucun coup possible")
-    
-    game = ConnectFour()
 
     args = {
         'C': 2,
@@ -300,12 +350,6 @@ def play_mcts(json_info):
         'dirichlet_epsilon': 0.,
         'dirichlet_alpha': 0.3
     }
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    model = ResNet(game, 9, 128, device)
-    model.load_state_dict(torch.load("ia/model_7_ConnectFour.pt", map_location=device))
-    model.eval()
 
     mcts = MCTS(game, args, model)
 
@@ -323,34 +367,22 @@ def play_mcts(json_info):
             board[ligne][action] = player
             break
 
-    # Créer un dictionnaire pour le coup joué
-    coup =  action + ligne*7
+    is_human_ia, winner = check_victory(board)
 
-    # Retourner le coup joué en format JSON
-    return json.dumps(coup)
+    if is_human_ia == True and winner == -1:
+        # Return Victoire Humain
+        info_json = {
+            "coup": action + ligne*7,
+            "player_win": winner
+        }
+        return info_json
 
-
-def test():
-
-    board = {
-        "board": [
-            0, 0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 0, 
-            0, 0,-1, 0, 1, 0, 0, 
-            0, 0, 1,-1, 1, 0, 0, 
-            0, 0,-1, 1,-1, 0, 0, 
-            0,-1,-1, 1,-1, 0, 0
-        ],
-        "currentPlayer": -1
+    info_json = {
+        "coup": action + ligne*7,
+        "player_win": 0
     }
-
-    print(f"JSON envoyé : {board}")
-
-    move = play_mcts(board)
-
-    print(f"JSON retourné : {move}")
-
-    return move
+    return info_json
+    return json.dumps(coup)
 
 
 
@@ -367,7 +399,7 @@ def resultat():
     valeur = request.json.get('valeur')  # Récupère les données envoyées par l'utilisateur
     resultat = play_mcts(valeur)  # Appelle la fonction Python
     print(resultat)
-    return jsonify({'resultat': resultat})
+    return resultat
 
 if __name__ == '__main__':
     app.run(debug=True)

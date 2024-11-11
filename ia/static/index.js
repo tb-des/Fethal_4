@@ -1,6 +1,7 @@
 // Sélectionner toutes les cases
 const cases = document.querySelectorAll('.grid-item');
 var $is_turn = 0;
+var $is_over = 0;
 const $player_color = 'yellow';
 const $ai_color = 'red';
 
@@ -38,15 +39,15 @@ cases.forEach(caseElement => {
     // Ajouter un écouteur d'événement pour le clic
     caseElement.addEventListener('click', () => {
         // Vérifier si la case est déjà jaune
-        if ($is_turn == 0) {
+
+        if ($is_turn == 0 && $is_over == 0) {
+            
             if (caseElement.style.backgroundColor !== $player_color || caseElement.style.backgroundColor !== $ai_color) {
                 findLowestAvailableCase(Array.from(cases).indexOf(caseElement)).style.backgroundColor = $player_color;
                 $is_turn = 1;
             }
-        }
-        else if ($is_turn == 1) {
+
             //Fonction Alext
-            // document.body.style.backgroundColor = 'red'
             let table = tablecase();
             // Envoie une requête POST à Flask via AJAX
             fetch('/resultat', {
@@ -59,14 +60,25 @@ cases.forEach(caseElement => {
             .then(response => response.json())  // Attends la réponse en format JSON
             .then(data => {
                 // Affiche le résultat reçu
-                cases[data.resultat].style.backgroundColor = $ai_color;
+
+                if (data.player_win == 1) {
+                    alert("Tu as gagné");
+                    $is_over = 1;
+                }
+                else{
+                    cases[data.coup].style.backgroundColor = $ai_color;
+                }
+                
+                if (data.player_win == -1) {
+                    alert("L'IA a gagné");
+                    $is_over = 1;
+                }
+
                 $is_turn = 0;
             })
             .catch(error => {
                 console.error('Erreur:', error);
             });
-
-            
         }
     });
 });
